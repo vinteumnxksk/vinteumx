@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vinteumnx</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://cdn.discordapp.com/emojis/1397681454615498975.png" type="image/png">
+
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: none; /* remove cursor padrão */
+    }
+
+    /* Background */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("https://media.discordapp.net/attachments/1390454260466188503/1462319587952693411/8239bddc8e6ae1df0ec4bf59ed1160f0.png?ex=696dc2be&is=696c713e&hm=0e89a8e047a3c24a311fb55b5baba3fbc4a45f0e985978a5f869278c9c043894&=&format=webp&quality=lossless&width=990&height=660");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: saturate(150%) brightness(70%);
+      z-index: -1;
+      transition: filter 0.5s ease;
+    }
+
+    /* Viewer counter */
+    .viewer-counter {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      background: rgba(0, 0, 0, 0.45);
+      padding: 8px 14px;
+      border-radius: 10px;
+
+      box-shadow: 0 0 8px rgba(255,255,255,0.12); /* glow sutil */
+      backdrop-filter: blur(4px);
+
+      z-index: 999;
+    }
+
+    /* Olho piscando */
+    .viewer-counter .eye {
+      font-size: 1.3rem;
+      animation: blink 3s infinite;
+    }
+
+    @keyframes blink {
+      0%, 90%, 100% { opacity: 1; }
+      91%, 93% { opacity: 0; }
+    }
+
+    .viewer-counter .number {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Container principal */
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 40px 60px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      max-width: 400px;
+      width: 90%;
+      position: relative;
+      z-index: 1;
+      transition: filter 0.5s ease;
+    }
+
+    .blurred {
+      filter: blur(70px);
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #ddd;
+      margin-bottom: 30px;
+    }
+
+    /* Botões */
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 20px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+
+      /* Glow sutil */
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.08);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.20);
+    }
+
+    /* Tons diferentes de preto para os botões */
+    .btn-left  { background-color: #1a1a1a; }
+    .btn-center { background-color: #111111; }
+    .btn-right { background-color: #2a2a2a; }
+
+    img {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+    }
+
+    @media (max-width: 500px) {
+      .container { padding: 30px 20px; }
+      h1 { font-size: 1.8rem; }
+      img { width: 100px; }
+    }
+
+    /* Overlay intro */
+    .intro-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 2rem;
+      z-index: 2;
+      text-align: center;
+      pointer-events: all;
+    }
+
+    .intro-overlay.hidden {
+      display: none;
+    }
+
+    /* Barra de progresso animada */
+    #progress {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 250px;
+      height: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1000;
+      -webkit-appearance: none;
+      background: linear-gradient(90deg, #ff00ff, #00ffff, #ff00ff);
+      background-size: 200% 100%;
+      animation: gradientMove 3s linear infinite;
+    }
+
+    #progress::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    #progress::-moz-range-thumb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    /* CURSOR SIMPLES */
+    .cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #000;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5), 0 0 20px rgba(0,255,255,0.3);
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.1s ease-out;
+    }
+
+  </style>
+</head>
+<body>
+  <audio id="musica" src="cleared mp3.mp3" loop></audio>
+
+  <!-- Viewer Counter Fixo -->
+  <div class="viewer-counter">
+    <span class="eye">👁️</span>
+    <span class="number">5021</span>
+  </div>
+
+  <div class="container blurred" id="mainContainer">
+    <img src="https://i.pinimg.com/736x/d1/ab/b2/d1abb2f380891bf8536eacd01283e797.jpg" alt="Imagem 21">
+    <h1>𝚝𝚑𝚒𝚜 𝚒𝚜 𝟸𝟷!</h1>
+    <p>「神所生的,勝過世界；這就是勝過世界的勝利:我們的信心」約翰福音 5:4.</p>
+
+    <div class="button-group">
+      <a href="https://www.roblox.com/pt/users/2027649888/profile" class="btn btn-left">𝚛𝚋𝚕𝚡</a>
+      <a href="https://discord.com/users/1200269002300211243" class="btn btn-center">𝚖𝚎!</a>
+      <a href="https://discord.gg/EqTV3C3k4F" class="btn btn-right">𝚟𝟸𝟷</a>
+    </div>
+  </div>
+
+  <div class="intro-overlay" id="introOverlay">CLIQUE NA TELA</div>
+  <input type="range" id="progress" min="0" max="100" value="0">
+
+  <!-- Cursor simples -->
+  <div class="cursor" id="cursor"></div>
+
+  <script>
+    const audio = document.getElementById("musica");
+    const container = document.getElementById("mainContainer");
+    const overlay = document.getElementById("introOverlay");
+    const progress = document.getElementById('progress');
+
+    audio.volume = 0.5;
+
+    function startIntro(){
+      container.classList.remove("blurred");
+      overlay.classList.add("hidden");
+      audio.play().catch(e=>console.log("Autoplay bloqueado"));
+      window.removeEventListener("click", startIntro);
+    }
+    window.addEventListener("click", startIntro);
+
+    audio.addEventListener('timeupdate', () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.value = percent;
+    });
+
+    progress.addEventListener('input', () => {
+      const time = (progress.value / 100) * audio.duration;
+      audio.currentTime = time;
+    });
+
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.transform = `translate(${e.clientX - 7}px, ${e.clientY - 7}px)`;
+    });
+  </script>
+</body>
+</html>
